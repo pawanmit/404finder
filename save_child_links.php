@@ -8,27 +8,19 @@ $db_connection = wrapper_mysql_connect(null);
 
 get_and_save_child_urls();
 
-//get_child_links("www.wired.com");
-
-//echo $content;
-
 function get_and_save_child_urls() {
     date_default_timezone_set("America/Los_Angeles");
     global $db_connection;
-    $sql = "SELECT id, link FROM parent_link WHERE is_processed = 0 LIMIT 10";
+    $sql = "SELECT id, link FROM parent_link WHERE is_processed = 0";
     $result = wrapper_mysql_query($sql, $db_connection);
     if (mysql_numrows($result) == 0) {
-        echo "No parent links found";
+        echo "No parent links found that need processing";
     } else {
         while($parent = mysql_fetch_array($result)) {
-            if ( !is_parent_processed($parent['id']) ) {
                 write_to_log("Processing parent with id " . $parent['id'] . "\n");
                 $child_links = get_child_links($parent['link']);
-                insert_child_links($child_links);
+                save_child_links($child_links);
                 mark_parent_processed($parent['id']);
-            } else {
-                write_to_log("Skipping parent link with id " . $parent['id'] . "\n");
-            }
         }
     }
 }
@@ -48,28 +40,32 @@ function is_parent_processed($parent_id) {
 function get_child_links($parent_link) {
     $html = get_link_content($parent_link);
     $links = get_hrefs($html);
-    foreach($links as $link) {
-        //echo $link . "\n";
-    }
+    //foreach($links as $link) {
+        //echo $link . "<BR>";
+    //}
     return $links;
 }
 
-function insert_child_links($child_links) {
+function save_child_links($child_links) {
     foreach($child_links as $link) {
         $link = rel2abs($link, '');
         if (filter_var($link, FILTER_VALIDATE_URL) === FALSE) {
             write_to_log('Not a valid URL:' .  $link . "\n");
-        }
-        $sql = "INSERT into child_link (link) VALUES ('" . $link . "')"; ;
-        //write_to_log($sql . "\n");
-        global $db_connection;
-        try {
-            wrapper_mysql_query($sql, $db_connection);
-        } catch (Exception $e) {
-
+        } else {
+            insert_child_link($link);
         }
     }
+}
 
+function insert_child_link($link) {
+    $sql = "INSERT into child_link (link) VALUES ('" . $link . "')"; ;
+    //write_to_log($sql . "\n");
+    global $db_connection;
+    try {
+        wrapper_mysql_query($sql, $db_connection);
+    } catch (Exception $e) {
+
+    }
 }
 
 function get_http_status($url) {
