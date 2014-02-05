@@ -1,6 +1,6 @@
 <?php
 
-$debugOn = false;
+$debugOn = true;
 date_default_timezone_set("America/Los_Angeles");
 
 
@@ -8,7 +8,7 @@ date_default_timezone_set("America/Los_Angeles");
 function wrapper_mysql_connect($environment) {
 
 
-		$local_db = array(
+	$local_db = array(
 			'host' => '127.0.0.1',
 			'database' => 'link_analyzer',
 			'username' => 'root',
@@ -17,11 +17,16 @@ function wrapper_mysql_connect($environment) {
     $dev_db = array(
         'host' => '10.89.113.134',
         'database' => 'link_analyzer',
-        'username' => 'root',
-        'password' => 'pangea');
+        'username' => 'pmittal',
+        'password' => 'password');
     global $debugOn;
 
-	$inuse_db = $dev_db;
+    if ($environment = 'local') {
+        $inuse_db = $local_db;
+    } else if ($environment = 'dev') {
+        $inuse_db = $dev_db;
+    }
+
 	
 	$host = $inuse_db['host'];
 	$username = $inuse_db['username'];

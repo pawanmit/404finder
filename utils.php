@@ -1,6 +1,6 @@
 <?php
 function write_to_log($message) {
-    file_put_contents("./log/404.log" , $message . "\n", FILE_APPEND);
+    file_put_contents("./log/404.log" , $message, FILE_APPEND);
 }
 
 function str_lreplace($search, $replace, $subject) {

@@ -5,6 +5,8 @@ require_once 'utils.php';
 
 $db_connection = wrapper_mysql_connect(null);
 
+set_time_limit(0);
+ini_set('memory_limit', '1024M');
 
 get_and_save_child_urls();
 
