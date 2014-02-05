@@ -13,10 +13,15 @@ function wrapper_mysql_connect($environment) {
 			'database' => 'link_analyzer',
 			'username' => 'root',
 			'password' => 'root');
-			
+
+    $dev_db = array(
+        'host' => '10.89.113.134',
+        'database' => 'link_analyzer',
+        'username' => 'root',
+        'password' => 'pangea');
     global $debugOn;
 
-	$inuse_db = $local_db;
+	$inuse_db = $dev_db;
 	
 	$host = $inuse_db['host'];
 	$username = $inuse_db['username'];
